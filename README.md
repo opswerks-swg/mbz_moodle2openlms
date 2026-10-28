@@ -1,5 +1,7 @@
 # mbz2openlms
 
+Moodle → OpenLMS course migration and checker.
+
 Migrates Moodle courses to OpenLMS (our Open edX, Ulmo), and checks the result.
 
 - `mbz2openlms convert` turns a Moodle course backup (`.mbz`) into a course archive to import in
