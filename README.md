@@ -20,11 +20,19 @@ Migrates Moodle courses to OpenLMS (our Open edX, Ulmo), and checks the result.
 
 ## Quick start
 
+Install the command once, from the clone (details and updating: runbook step 0):
+
 ```bash
-uv sync
-uv run mbz2openlms convert ~/Downloads/backup-moodle2-course-131-....mbz   # → out/<course>/
+uv export --frozen --no-dev --no-hashes --no-emit-project -o /tmp/mbz2openlms-pins.txt
+uv tool install --editable . -c /tmp/mbz2openlms-pins.txt
+```
+
+Then, from any folder (output always goes to the repository's `out/<course>/`):
+
+```bash
+mbz2openlms convert ~/Downloads/backup-moodle2-course-131-....mbz
 # Studio: create the course, Tools › Import the .tar.gz, do the follow-ups, Tools › Export
-uv run mbz2openlms check ~/Downloads/backup-...mbz --export ~/Downloads/course.xxxx.tar.gz
+mbz2openlms check ~/Downloads/backup-...mbz --export ~/Downloads/course.xxxx.tar.gz
 ```
 
 | Command | Does |
@@ -40,7 +48,11 @@ keys.
 
 ## Development
 
+Developers work in the clone with `uv sync` and `uv run …`. The installed command runs the same
+code, since the install is editable.
+
 ```bash
+uv sync
 uv run pytest                                          # synthetic backup, fake Studio
 M2O_SAMPLE_MBZ=~/Downloads/<course 131>.mbz uv run pytest   # also the real pilot course
 uv run ruff check . && uv run ruff format --check .

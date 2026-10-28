@@ -19,9 +19,27 @@ You need:
 | Teacher (or manager) access to the course in Moodle | You can see **More › Course reuse** on the course page. |
 | A Studio account on OpenLMS preprod with permission to create courses, or a course already created for you in which you have the **Staff** or **Admin** role | You can open <https://openlms-studio.werkslearning-preprod.opswerks.com> and see **New course** or the course. |
 | This repository and `uv` on your machine | `uv --version` prints a version. Install: <https://docs.astral.sh/uv/>. |
-| The tool installed | In the repository folder: `uv sync`, then `uv run mbz2openlms --version`. |
+| The `mbz2openlms` command | `mbz2openlms --version` prints a version, from any folder. To install it, see below. |
 
-All commands below run from the repository folder.
+To install the command, once, in the repository folder:
+
+```bash
+uv export --frozen --no-dev --no-hashes --no-emit-project -o /tmp/mbz2openlms-pins.txt
+uv tool install --editable . -c /tmp/mbz2openlms-pins.txt
+```
+
+The first line lists the library versions the tests ran on; the second installs `mbz2openlms`
+from this folder with those versions. If `mbz2openlms` is then "command not found", run
+`uv tool update-shell` and open a new terminal. Don't move or delete the repository folder
+afterwards: the command runs from it.
+
+To update, run `git pull` in the repository folder. That is enough, unless the pull changed
+`pyproject.toml` or `uv.lock`: then run the two lines again, with `--reinstall` at the end of the
+second.
+
+Run `mbz2openlms` from any folder. It always writes to the repository's `out/` folder (git
+ignores it: it holds the answer keys), and always reads the repository's `review-rules.toml` and
+`known-gaps/`.
 
 Two files in the repository decide what the checker accepts:
 
@@ -47,11 +65,11 @@ the quiz answer keys.
 ## 2. Convert the backup
 
 ```bash
-uv run mbz2openlms convert ~/Downloads/backup-moodle2-course-131-....mbz
+mbz2openlms convert ~/Downloads/backup-moodle2-course-131-....mbz
 ```
 
-It prints the archive it wrote and how many manual follow-ups there are. Everything is in
-`out/<course>/` (for example `out/a11-fnd-lnx01/`):
+It prints the archive it wrote and how many manual follow-ups there are. Everything is in the
+repository's `out/<course>/` (for example `out/a11-fnd-lnx01/`):
 
 | File | What it is | Share it? |
 |---|---|---|
@@ -83,7 +101,7 @@ replaces all of its content.
 ## 4. Import the archive
 
 1. In the course, open **Tools › Import**.
-2. **Choose a file to import**, pick `out/<course>/<course>-<run>.tar.gz`, then
+2. **Choose a file to import**, pick `out/<course>/<course>-<run>.tar.gz` in the repository, then
    **Replace my course with the one above**.
 3. Wait for all steps to turn green: Uploading, Unpacking, Verifying, Updating course. It takes a
    minute or two.
@@ -161,7 +179,7 @@ Learners only see published content, and the checker flags anything unpublished.
 The first time a course is migrated, create its known-gaps file from the Moodle backup:
 
 ```bash
-uv run mbz2openlms gaps init ~/Downloads/backup-moodle2-course-131-....mbz
+mbz2openlms gaps init ~/Downloads/backup-moodle2-course-131-....mbz
 ```
 
 This writes `known-gaps/<course>.toml` listing the Moodle features with no OpenLMS equivalent
@@ -171,7 +189,7 @@ they delete what is not acceptable and fill in "Reviewed by". Linux Fundamentals
 Then check:
 
 ```bash
-uv run mbz2openlms check ~/Downloads/backup-moodle2-course-131-....mbz \
+mbz2openlms check ~/Downloads/backup-moodle2-course-131-....mbz \
   --export ~/Downloads/course.xxxxxxxx.tar.gz
 ```
 
@@ -253,5 +271,8 @@ you import anything.
 | Check: "external host not yet reviewed" (warning) | The review-rules document has not listed the host yet | Nothing; listed for the reviewers |
 | Check: "unpublished changes" | Edits were saved but not published | Publish, export again, re-run the check |
 | Check report lists **Stale known gaps** | The known-gaps file lists something that no longer fails | Tell the file's owner; nothing is wrong with the course |
+| `mbz2openlms: command not found` | The command isn't on your `PATH` yet | Run `uv tool update-shell` and open a new terminal. If it still fails, install it again (step 0) |
+| "mbz2openlms isn't running from its repository" | It was installed without `--editable`, or the repository folder moved | Install it again from the repository folder, exactly as in step 0 |
+| "Review rules not found" | `review-rules.toml` is missing from the repository folder | Restore it with `git checkout -- review-rules.toml` in the repository folder. The checker never runs without it |
 | `check` exits with status 2 | The backup or export can't be read | Check the paths. The export is the `.tar.gz` from Studio's **Tools › Export** |
 | A feature in your course isn't in the table above | The tool hasn't met it before | It is listed in `conversion-report.md` as a manual follow-up; rebuild it by hand and tell the maintainers |

@@ -24,9 +24,9 @@ Run it with the instructor driving and the maintainer watching. The instructor s
 screen and reads the runbook aloud. The maintainer doesn't touch the keyboard and only notes
 where the runbook was unclear.
 
-1. **Setup (10 min).** Runbook step 0: clone the repository, `uv sync`,
-   `uv run mbz2openlms --version`. Show the two files that steer the checker:
-   `review-rules.toml` and `known-gaps/`.
+1. **Setup (10 min).** Runbook step 0: clone the repository, install the command
+   (`uv tool install --editable`), then `mbz2openlms --version` from another folder. Show the two
+   files that steer the checker: `review-rules.toml` and `known-gaps/`.
 2. **Backup (5 min).** Runbook step 1 on the chosen course. Point out "Include enrolled users"
    and the `-nu.mbz` name.
 3. **Convert (5 min).** Runbook step 2. Open `conversion-report.md` together and read the

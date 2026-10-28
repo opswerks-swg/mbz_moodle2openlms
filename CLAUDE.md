@@ -60,6 +60,10 @@ The pipeline: `safe` → `moodle` (read) → `convert` + `olx` (build) | `openlm
 - `e2e/`: the end-to-end harness against a running Studio. `local.py` is for the tutor dev
   only, through docker exec.
 - `credentials.py`, `htmlutil.py`: neutral helpers shared by both sides.
+- `paths.py`: the repository root, from which `out/`, `review-rules.toml` and `known-gaps/` are
+  resolved, never from the current folder. Instructors run an editable `uv tool install` from
+  the clone (runbook step 0) and call `mbz2openlms` from anywhere. `M2O_HOME` replaces the
+  root; `tests/conftest.py` sets it for every test, so tests never write into the clone.
 
 ## Invariants (tested in `tests/test_invariants.py`)
 
@@ -72,6 +76,8 @@ The pipeline: `safe` → `moodle` (read) → `convert` + `olx` (build) | `openlm
   without migrating `known-gaps/*.toml`.
 - lxml elements: track them in sets by element, never by `id()`. Proxies are short-lived and
   their ids get reused.
+- `Rules.load()` never returns empty rules: a missing `review-rules.toml` is an error (exit 2),
+  since with no rules blocked components would pass (`tests/test_cli.py`).
 
 ## Tests
 

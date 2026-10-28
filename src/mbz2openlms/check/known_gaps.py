@@ -11,15 +11,13 @@ import tomllib
 from datetime import date
 from pathlib import Path
 
+from .. import paths
 from ..moodle.model import Course
 from .findings import FAIL, GAP, WARN, Finding, KnownGap
 
-REPO_GAPS = Path(__file__).resolve().parents[3] / "known-gaps"
-
 
 def default_path(course: Course) -> Path:
-    local = Path("known-gaps") / f"{course.slug}.toml"
-    return local if local.parent.is_dir() else REPO_GAPS / f"{course.slug}.toml"
+    return paths.gaps_dir() / f"{course.slug}.toml"
 
 
 def load(path: Path) -> list[KnownGap]:

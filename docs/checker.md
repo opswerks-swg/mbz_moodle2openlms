@@ -34,7 +34,8 @@ runbook has it rewritten.
 
 ## Known gaps
 
-`known-gaps/<course slug>.toml` lists accepted differences:
+`known-gaps/<course slug>.toml`, in the repository wherever the command runs from, lists
+accepted differences:
 
 ```toml
 [[gap]]
@@ -49,7 +50,8 @@ course's file is reviewed by Bay and Geo ("Reviewed by:" at the top).
 
 ## Review rules
 
-`review-rules.toml` (or `--rules <file>`):
+`review-rules.toml` in the repository (or `--rules <file>`). Without it the checker stops with an
+error: it never runs with no rules.
 
 ```toml
 [links]
@@ -82,7 +84,7 @@ the **Staff** role on the course:
 export M2O_CLIENT_ID=... M2O_CLIENT_SECRET=...
 export M2O_STUDIO_URL=https://openlms-studio.werkslearning-preprod.opswerks.com
 export M2O_LMS_URL=https://openlms.werkslearning-preprod.opswerks.com
-uv run mbz2openlms check <backup.mbz> --course course-v1:OpsWerks+A11-FND-LNX01+2026
+mbz2openlms check <backup.mbz> --course course-v1:OpsWerks+A11-FND-LNX01+2026
 ```
 
 It reads:

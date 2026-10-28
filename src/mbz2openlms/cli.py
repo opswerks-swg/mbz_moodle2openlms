@@ -12,7 +12,7 @@ from pathlib import Path
 
 import click
 
-from . import __version__
+from . import __version__, paths
 from .check import Rules, known_gaps, predict_gaps
 from .check import check as run_check
 from .convert import Options
@@ -29,7 +29,6 @@ from .report import conversion, to_json
 from .report import inventory as inventory_report
 from .safe.archive import ArchiveError
 
-OUT = Path("out")
 BACKUP = click.Path(exists=True, path_type=Path)
 
 
@@ -48,6 +47,9 @@ def main(argv: list[str] | None = None) -> int:
     except click.exceptions.Abort:
         click.echo("Aborted.", err=True)
         return 2
+    except paths.SetupError as exc:
+        click.echo(f"Error: {exc}", err=True)
+        return 2
 
 
 @click.group()
@@ -63,7 +65,7 @@ def inventory(backup: Path, output: Path | None) -> int:
     """Write inventory.md (shareable) and inventory.json (internal: has answer keys)."""
 
     course = _read(read_backup, backup)
-    folder = output or OUT / course.slug
+    folder = output or paths.out() / course.slug
     folder.mkdir(parents=True, exist_ok=True)
     (folder / "inventory.md").write_text(inventory_report.render(course), encoding="utf-8")
     (folder / "inventory.json").write_text(to_json(course), encoding="utf-8")
@@ -97,7 +99,7 @@ def build_archive(backup: Path, opts, output: Path | None):
         with open_backup(backup) as root:
             course = read_course(root, backup.name)
             result = run_convert(course, opts)
-            folder = output or OUT / course.slug
+            folder = output or paths.out() / course.slug
             folder.mkdir(parents=True, exist_ok=True)
             olx = folder / "olx"
             if olx.exists():
@@ -148,7 +150,7 @@ def check(backup, export, course_key, studio, lms, ca_bundle, gaps_path, rules, 
     gaps_file = gaps_path or known_gaps.default_path(course)
     listed = known_gaps.load(gaps_file) if gaps_file.is_file() else []
     report = run_check(course, migrated, listed, Rules.load(rules))
-    folder = output or OUT / course.slug
+    folder = output or paths.out() / course.slug
     md = check_report.write(report, folder, gaps_file=gaps_file if gaps_file.is_file() else None)
     click.echo(
         f"{'PASS' if report.passed else 'FAIL'}: "
@@ -173,7 +175,7 @@ def gaps_init(backup: Path, output: Path | None) -> int:
     """Seed known-gaps/<course>.toml from the Moodle features with no OpenLMS equivalent."""
 
     course = _read(read_backup, backup)
-    path = output or Path("known-gaps") / f"{course.slug}.toml"
+    path = output or paths.gaps_dir() / f"{course.slug}.toml"
     if path.exists():
         raise Failed(f"{path} exists: edit it, or delete it to seed it again.")
     path.parent.mkdir(parents=True, exist_ok=True)

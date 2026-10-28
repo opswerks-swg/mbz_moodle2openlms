@@ -14,10 +14,9 @@ from pathlib import Path
 
 from lxml import etree
 
-from .. import credentials
+from .. import credentials, paths
 from ..htmlutil import links, plain_text
 
-REPO_RULES = Path(__file__).resolve().parents[3] / "review-rules.toml"
 MOODLE_MARKERS = re.compile(r"@@PLUGINFILE@@|pluginfile\.php|\$@[A-Z]+\*\d+@\$")
 EMBEDS = {"iframe", "embed", "object"}
 # Components that contain other components.
@@ -41,20 +40,21 @@ class Rules:
 
     @classmethod
     def load(cls, path: Path | None = None) -> Rules:
-        """``path``, else ./review-rules.toml, else the repository's own file."""
-        for candidate in [path] if path else [Path("review-rules.toml"), REPO_RULES]:
-            if candidate.is_file():
-                data = tomllib.loads(candidate.read_text(encoding="utf-8"))
-                hosts, blocks = data.get("links", {}), data.get("blocks", {})
-                return cls(
-                    str(candidate),
-                    {h.lower() for h in hosts.get("allowed_hosts", [])},
-                    set(blocks.get("blocked", [])),
-                    set(blocks.get("allowed", [])),
-                )
-        if path:
-            raise FileNotFoundError(path)
-        return cls()
+        """``path``, else the repository's ``review-rules.toml``. Never empty rules: without them
+        blocked components would pass."""
+        file = path or paths.rules_file()
+        if not file.is_file():
+            if path:
+                raise FileNotFoundError(path)
+            raise paths.SetupError(f"Review rules not found: {file}")
+        data = tomllib.loads(file.read_text(encoding="utf-8"))
+        hosts, blocks = data.get("links", {}), data.get("blocks", {})
+        return cls(
+            paths.display(file),
+            {h.lower() for h in hosts.get("allowed_hosts", [])},
+            set(blocks.get("blocked", [])),
+            set(blocks.get("allowed", [])),
+        )
 
 
 @dataclass(frozen=True)

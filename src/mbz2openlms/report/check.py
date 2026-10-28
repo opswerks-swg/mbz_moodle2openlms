@@ -6,6 +6,7 @@ from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
 
+from .. import paths
 from ..check import FAIL, GAP, PASS, SKIP, WARN, Report
 from . import table, to_json
 
@@ -27,7 +28,7 @@ def render(report: Report, generated: datetime | None = None, gaps_file: Path | 
         "",
         f"Generated {generated.isoformat(timespec='seconds')}. Moodle: "
         f"`{report.moodle_source}`. OpenLMS: {report.openlms_source}."
-        + (f" Known gaps: `{gaps_file}`." if gaps_file else ""),
+        + (f" Known gaps: `{paths.display(gaps_file)}`." if gaps_file else ""),
         "",
     ]
     lines += table(["Status", "Count"], [[LABELS[s], report.count(s)] for s in LABELS])

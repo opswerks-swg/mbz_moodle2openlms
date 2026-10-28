@@ -14,6 +14,17 @@ from mbz2openlms.olx.writer import pack, write
 from tests.fixtures.mbz_builder import pack_mbz, sample_backup
 
 SAMPLE_MBZ = os.environ.get("M2O_SAMPLE_MBZ")
+REPO = Path(__file__).resolve().parents[1]
+
+
+@pytest.fixture(autouse=True)
+def m2o_home(tmp_path, monkeypatch) -> Path:
+    """Each test's repository (``M2O_HOME``), so output and known gaps never land in the clone."""
+    home = tmp_path / "home"
+    home.mkdir()
+    shutil.copy(REPO / "review-rules.toml", home)
+    monkeypatch.setenv("M2O_HOME", str(home))
+    return home
 
 
 @pytest.fixture(scope="session")
