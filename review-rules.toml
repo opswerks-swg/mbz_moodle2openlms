@@ -1,0 +1,20 @@
+# OpenLMS course review rules used by `mbz2openlms check`.
+#
+# PROVISIONAL. The OpenLMS course review-rules document (external calls, credentials) has not
+# been delivered yet. Until it is, every external host is reported as a warning for a reviewer
+# to accept or reject. Add a host below only once it has been reviewed, with who accepted it
+# and when. Credentials, scripts, embeds from unlisted hosts, links back to Moodle and blocked
+# component types always fail.
+
+[links]
+# Hosts learners may be sent to, or content may be loaded from. Exact host names.
+allowed_hosts = []
+
+[blocks]
+# Component types that call external services or run their own code: always fail.
+blocked = ["lti", "lti_consumer", "lti_advantage", "google-document", "google-calendar", "jsinput"]
+# Component types that need no review. Any other type is a warning.
+allowed = [
+  "vertical", "html", "problem", "itembank", "library_content", "openassessment", "survey",
+  "poll", "video", "discussion", "split_test", "scorm",
+]

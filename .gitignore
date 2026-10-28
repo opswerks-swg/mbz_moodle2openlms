@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.idea/
+.DS_Store
+
+# Generated output contains quiz answer keys. Never commit it.
+out/
+
+# Course backups and exports contain course content. Never commit them.
+*.mbz
+*.imscc
+*.tar.gz
