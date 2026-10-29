@@ -6,7 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 `mbz2openlms`: a CLI that converts Moodle course backups (`.mbz`) into OpenLMS (Open edX, Ulmo)
 course archives, and checks a migrated course against its backup. Instructors use it through
-`docs/runbook.md`. The route decision is in `docs/route-decision.md`.
+`docs/runbook.md`. The route decision is in `docs/route-decision.md`; what the checker compares
+is in `docs/checker.md`.
 
 ## Commands
 
@@ -25,6 +26,12 @@ The CLI (`cli.py`, click): `inventory`, `convert`, `check`, `gaps init`, `e2e lo
 `e2e run`. `check` exits 0 PASS, 1 FAIL, 2 error. It reads a Studio export (`--export`) or the
 Studio APIs (`--course`). API mode takes `M2O_STUDIO_URL`, `M2O_LMS_URL`, `M2O_CLIENT_ID`,
 `M2O_CLIENT_SECRET` and optionally `M2O_CA_BUNDLE`.
+
+Every command writes to `out/<course slug>/` unless given `-o`; `convert` replaces `olx/` there
+on each run. `convert` drops Moodle's dates and quiz time limits unless given `--keep-dates` and
+`--timed-exams`, which is why the seeded known gaps list time limits. `check` picks up
+`known-gaps/<course slug>.toml` without being told; `gaps init` writes that file and refuses to
+overwrite it.
 
 ## Layout
 
