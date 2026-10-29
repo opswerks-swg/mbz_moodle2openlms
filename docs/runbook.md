@@ -8,6 +8,8 @@ with `mbz2openlms`, import the result in Studio, finish the listed follow-ups by
 the result with `mbz2openlms check`. Learner data (enrolments, attempts, grades, submissions)
 is **not** migrated.
 
+To see what the reports look like before you start, read the [samples](samples/README.md).
+
 > Prod is out of scope for now: migrate into **preprod** only, until Bay and Geo sign off.
 
 ## 0. Before you start

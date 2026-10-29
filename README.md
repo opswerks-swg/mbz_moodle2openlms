@@ -15,6 +15,7 @@ Migrates Moodle courses to OpenLMS (our Open edX, Ulmo), and checks the result.
 | Document | For |
 |---|---|
 | [docs/runbook.md](docs/runbook.md) | Migrating a course, step by step, with troubleshooting |
+| [docs/samples/](docs/samples/README.md) | Sample reports (`inventory.md`, `conversion-report.md`, `check-report.md`) from a made-up course |
 | [docs/checker.md](docs/checker.md) | What the checker compares, known gaps, review rules, API mode, end-to-end test |
 | [docs/route-decision.md](docs/route-decision.md) | Why this route, compared with the alternatives |
 | [docs/inventory-and-mapping.md](docs/inventory-and-mapping.md) | The pilot course (Linux Fundamentals): inventory, mapping, gaps |

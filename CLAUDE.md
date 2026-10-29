@@ -97,6 +97,8 @@ The pipeline: `safe` → `moodle` (read) → `convert` + `olx` (build) | `openlm
   Ulmo asset URLs.
 - `test_sample_course.py` is opt-in (`M2O_SAMPLE_MBZ`): the real pilot course, as converted,
   after the runbook's follow-ups, and through `e2e`.
+- `docs/samples/` holds the shareable reports for the synthetic course, before and after the
+  follow-ups. Regenerate them (recipe in its README) when a report format changes.
 - `test_docs.py` fails on a raw tag outside code in `README.md`, `CLAUDE.md` and `docs/*.md`.
   Put placeholders such as `<course>` in backticks or a code block.
 
